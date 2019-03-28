@@ -121,7 +121,7 @@ class QRScanner : CDVPlugin, AVCaptureMetadataOutputObjectsDelegate {
     }
 
     func prepScanner(command: CDVInvokedUrlCommand) -> Bool{
-        let status = AVCaptureDevice.authorizationStatus(for: AVMediaTypeVideo)
+        let status = AVCaptureDevice.authorizationStatus(for: AVMediaType.video)
         if (status == AVAuthorizationStatus.restricted) {
             self.sendErrorCode(command: command, error: QRScannerError.camera_access_restricted)
             return false
@@ -133,7 +133,7 @@ class QRScanner : CDVPlugin, AVCaptureMetadataOutputObjectsDelegate {
             if (captureSession?.isRunning != true){
                 cameraView.backgroundColor = UIColor.clear
                 self.webView!.superview!.insertSubview(cameraView, belowSubview: self.webView!)
-                let availableVideoDevices = AVCaptureDevice.devices(for: AVMediaTypeVideo)
+                let availableVideoDevices = AVCaptureDevice.devices(for: AVMediaType.video)
                 for device in availableVideoDevices as! [AVCaptureDevice] {
                     if device.position == AVCaptureDevicePosition.back {
                         backCamera = device
@@ -254,10 +254,10 @@ class QRScanner : CDVPlugin, AVCaptureMetadataOutputObjectsDelegate {
     // ---- BEGIN EXTERNAL API ----
 
     func prepare(_ command: CDVInvokedUrlCommand){
-        let status = AVCaptureDevice.authorizationStatus(for: AVMediaTypeVideo)
+        let status = AVCaptureDevice.authorizationStatus(for: AVMediaType.video)
         if (status == AVAuthorizationStatus.notDetermined) {
             // Request permission before preparing scanner
-            AVCaptureDevice.requestAccess(for: AVMediaTypeVideo, completionHandler: { (granted) -> Void in
+            AVCaptureDevice.requestAccess(for: AVMediaType.video, completionHandler: { (granted) -> Void in
                 // attempt to prepScanner only after the request returns
                 self.backgroundThread(delay: 0, completion: {
                     if(self.prepScanner(command: command)){
@@ -395,7 +395,7 @@ class QRScanner : CDVPlugin, AVCaptureMetadataOutputObjectsDelegate {
 
     func getStatus(_ command: CDVInvokedUrlCommand){
 
-        let authorizationStatus = AVCaptureDevice.authorizationStatus(for: AVMediaTypeVideo);
+        let authorizationStatus = AVCaptureDevice.authorizationStatus(for: AVMediaType.video);
 
         var authorized = false
         if(authorizationStatus == AVAuthorizationStatus.authorized){
