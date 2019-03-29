@@ -135,10 +135,10 @@ class QRScanner : CDVPlugin, AVCaptureMetadataOutputObjectsDelegate {
                 self.webView!.superview!.insertSubview(cameraView, belowSubview: self.webView!)
                 let availableVideoDevices = AVCaptureDevice.devices(for: AVMediaType.video)
                 for device in availableVideoDevices as! [AVCaptureDevice] {
-                    if device.position == AVCaptureDevicePosition.back {
+                    if device.position == AVCaptureDevice.Position.back {
                         backCamera = device
                     }
-                    else if device.position == AVCaptureDevicePosition.front {
+                    else if device.position == AVCaptureDevice.Position.front {
                         frontCamera = device
                     }
                 }
@@ -151,7 +151,7 @@ class QRScanner : CDVPlugin, AVCaptureMetadataOutputObjectsDelegate {
                 captureSession = AVCaptureSession()
                 captureSession!.addInput(input)
                 metaOutput = AVCaptureMetadataOutput()
-                captureSession!.addOutput(metaOutput??)
+                captureSession!.addOutput(metaOutput!)
                 metaOutput!.setMetadataObjectsDelegate(self, queue: DispatchQueue.main)
                 metaOutput!.metadataObjectTypes = [AVMetadataObject.ObjectType.qr]
                 captureVideoPreviewLayer = AVCaptureVideoPreviewLayer(session: captureSession)
@@ -420,7 +420,7 @@ class QRScanner : CDVPlugin, AVCaptureMetadataOutputObjectsDelegate {
 
         var previewing = false
         if(captureVideoPreviewLayer != nil){
-            previewing = captureVideoPreviewLayer!.connection?.isEnabled
+            previewing = captureVideoPreviewLayer!.connection!.isEnabled
         }
 
         var showing = false
@@ -469,7 +469,7 @@ class QRScanner : CDVPlugin, AVCaptureMetadataOutputObjectsDelegate {
 
     func openSettings(_ command: CDVInvokedUrlCommand) {
         if #available(iOS 10.0, *) {
-        guard let settingsUrl = URL(string: UIApplicationOpenSettingsURLString) else {
+        guard let settingsUrl = URL(string: UIApplication.openSettingsURLString) else {
             return
         }
         if UIApplication.shared.canOpenURL(settingsUrl) {
@@ -482,7 +482,7 @@ class QRScanner : CDVPlugin, AVCaptureMetadataOutputObjectsDelegate {
         } else {
         // pre iOS 10.0
             if #available(iOS 8.0, *) {
-                UIApplication.shared.openURL(NSURL(string: UIApplicationOpenSettingsURLString)! as URL)
+                UIApplication.shared.openURL(NSURL(string: UIApplication.openSettingsURLString)! as URL)
                 self.getStatus(command)
             } else {
                 self.sendErrorCode(command: command, error: QRScannerError.open_settings_unavailable)
