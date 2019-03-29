@@ -253,7 +253,7 @@ class QRScanner : CDVPlugin, AVCaptureMetadataOutputObjectsDelegate {
 
     // ---- BEGIN EXTERNAL API ----
 
-    func prepare(_ command: CDVInvokedUrlCommand){
+    @objc(action:) func prepare(_ command: CDVInvokedUrlCommand){
         print("Am I even getting here?")
         let status = AVCaptureDevice.authorizationStatus(for: AVMediaType.video)
         if (status == AVAuthorizationStatus.notDetermined) {
@@ -273,14 +273,14 @@ class QRScanner : CDVPlugin, AVCaptureMetadataOutputObjectsDelegate {
         }
     }
 
-    func scan(_ command: CDVInvokedUrlCommand){
+    @objc(action:) func scan(_ command: CDVInvokedUrlCommand){
         if(self.prepScanner(command: command)){
             nextScanningCommand = command
             scanning = true
         }
     }
 
-    func cancelScan(_ command: CDVInvokedUrlCommand){
+    @objc(action:) func cancelScan(_ command: CDVInvokedUrlCommand){
         if(self.prepScanner(command: command)){
             scanning = false
             if(nextScanningCommand != nil){
@@ -290,18 +290,18 @@ class QRScanner : CDVPlugin, AVCaptureMetadataOutputObjectsDelegate {
         }
     }
 
-    func show(_ command: CDVInvokedUrlCommand) {
+    @objc(action:) func show(_ command: CDVInvokedUrlCommand) {
         self.webView?.isOpaque = false
         self.webView?.backgroundColor = UIColor.clear
         self.getStatus(command)
     }
 
-    func hide(_ command: CDVInvokedUrlCommand) {
+    @objc(action:) func hide(_ command: CDVInvokedUrlCommand) {
         self.makeOpaque()
         self.getStatus(command)
     }
 
-    func pausePreview(_ command: CDVInvokedUrlCommand) {
+    @objc(action:) func pausePreview(_ command: CDVInvokedUrlCommand) {
         if(scanning){
             paused = true;
             scanning = false;
@@ -310,7 +310,7 @@ class QRScanner : CDVPlugin, AVCaptureMetadataOutputObjectsDelegate {
         self.getStatus(command)
     }
 
-    func resumePreview(_ command: CDVInvokedUrlCommand) {
+    @objc(action:) func resumePreview(_ command: CDVInvokedUrlCommand) {
         if(paused){
             paused = false;
             scanning = true;
@@ -321,7 +321,7 @@ class QRScanner : CDVPlugin, AVCaptureMetadataOutputObjectsDelegate {
 
     // backCamera is 0, frontCamera is 1
 
-    func useCamera(_ command: CDVInvokedUrlCommand){
+    @objc(action:) func useCamera(_ command: CDVInvokedUrlCommand){
         let index = command.arguments[0] as! Int
         if(currentCamera != index){
             // camera change only available if both backCamera and frontCamera exist
@@ -362,19 +362,19 @@ class QRScanner : CDVPlugin, AVCaptureMetadataOutputObjectsDelegate {
         }
     }
 
-    func enableLight(_ command: CDVInvokedUrlCommand) {
+    @objc(action:) func enableLight(_ command: CDVInvokedUrlCommand) {
         if(self.prepScanner(command: command)){
             self.configureLight(command: command, state: true)
         }
     }
 
-    func disableLight(_ command: CDVInvokedUrlCommand) {
+    @objc(action:) func disableLight(_ command: CDVInvokedUrlCommand) {
         if(self.prepScanner(command: command)){
             self.configureLight(command: command, state: false)
         }
     }
 
-    func destroy(_ command: CDVInvokedUrlCommand) {
+    @objc(action:) func destroy(_ command: CDVInvokedUrlCommand) {
         self.makeOpaque()
         if(self.captureSession != nil){
         backgroundThread(delay: 0, background: {
@@ -394,7 +394,7 @@ class QRScanner : CDVPlugin, AVCaptureMetadataOutputObjectsDelegate {
         }
     }
 
-    func getStatus(_ command: CDVInvokedUrlCommand){
+    @objc(action:) func getStatus(_ command: CDVInvokedUrlCommand){
 
         let authorizationStatus = AVCaptureDevice.authorizationStatus(for: AVMediaType.video);
 
@@ -467,7 +467,7 @@ class QRScanner : CDVPlugin, AVCaptureMetadataOutputObjectsDelegate {
         commandDelegate!.send(pluginResult, callbackId:command.callbackId)
     }
 
-    func openSettings(_ command: CDVInvokedUrlCommand) {
+    @objc(action:) func openSettings(_ command: CDVInvokedUrlCommand) {
         if #available(iOS 10.0, *) {
         guard let settingsUrl = URL(string: UIApplication.openSettingsURLString) else {
             return
